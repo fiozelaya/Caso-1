@@ -14,14 +14,12 @@ using namespace std;
  Se implementaron compareTriplets y compareTriplets2, siendo la segunda función
  mejor que la primera. 
 
- La diferencia entre estas funciones, es que compareTriplets tiene 4 comparaciones (ifs):
- 2 para validar restricciones y 2 para sumar los puntos según corresponda, mientras
- que compareTriplets2 tiene únicamente 2 ifs y 1 if else, en las cuales se utiliza
- 1 para validar restricciones, y 1 if e if else para sumar los puntos según corresponda.
+ La diferencia entre estas funciones, es que compareTriplets tiene 6 comparaciones más
+ las comparaciones que realiza el for y 7 sumas, además de 2 deficiniciones de variables 
+ y 2 asignaciones de resultados al final del for. 
 
-Otra diferencia radica en que compareTriplets usa constantemente a[i] y b[i], mientras
-que compareTriplets2 declara 2 variables (actualA y actualB) a las que se les asignan estos 
-elementos para no tener que buscar el elemento en el Cuadro resultado cada vez que se necesite.
+ Mientras que la funcion 2 tiene solamente 6 comparaciones en total, 6 sumas
+ y solamente 2 asignaciones en total.
 */
 
 //compareTriplets: Esta función compara los puntos de Alice y Bob en 3 categorías.
@@ -34,14 +32,6 @@ int compareTriplets(int a[3], int b[3], int resultado[2]) {
     int ptsA = 0, ptsB = 0;
 
     for (int i = 0; i <= 2; i++) {
-        //asignación de variables
-        //restricciones
-        if (a[i] < 1 || a[i] > 100) {
-            return NULL;
-        }
-        if ( b[i] < 1 ||  b[i] > 100) {
-            return NULL;
-        }
         //comparación de puntos
         if (a[i] <  b[i]) {
             ptsB++;
@@ -62,27 +52,9 @@ int compareTriplets(int a[3], int b[3], int resultado[2]) {
 //restricciones: los puntos de Alice y Bob deben estar en el rango 1-100
 //salidas: se modifica el Cuadro "resultado" de modo que: [puntos_de_alice, puntos_de_bob]
 int compareTriplets2(int a[3], int b[3], int resultado[2]) {
-    //inicialización de variables
-    int actualA, actualB, ptsA = 0, ptsB = 0;
+    resultado[0] = (a[0] > b[0] ? 1 : 0) +  (a[1] > b[1] ? 1 : 0) + (a[2] > b[2] ? 1 : 0);
+    resultado[1] = (a[0] < b[0] ? 1 : 0) +  (a[1] < b[1] ? 1 : 0) + (a[2] < b[2] ? 1 : 0);
 
-    for (int i = 0; i <= 2; i++) {
-        actualA = a[i];
-        actualB = b[i];
-        //restricciones
-        if (actualA < 1 || actualA > 100 || actualB < 1 || actualB > 100) {
-            return NULL;
-        }
-        //comparación de puntos
-        if (actualA < actualB) {
-            ptsB++;
-        }
-        else if (actualB < actualA) {
-            ptsA++;
-        }
-    }
-    //asignación de puntos al Cuadro de resultados
-    resultado[0] = ptsA;
-    resultado[1] = ptsB;
 }
 
 
@@ -343,6 +315,102 @@ void minion_game(string text){
 
 }
 
+
+/*
+Ejercicio 5: Cipher
+
+*/
+
+string cipher(int k, string s) {
+    int length = s.length();
+    char sArray[length + 1];
+    strcpy_s(sArray, length + 1, s.c_str());
+    char matriz[k][length];
+    char resultado[length - k + 1];
+
+    int auxK;
+    char actual;
+    char bitTotal = NULL;
+
+    for (int i = 0; i < length - k + 1; i++) {
+        auxK = k;
+        actual = sArray[i];
+        if (i == 0) {
+            resultado[0] = actual;
+            int j = 0;
+            while (j != k) {
+                matriz[j][i + j] = actual;
+                j++;
+            }
+            continue;
+        }
+
+        while (auxK - 1 != 0) {
+            if (matriz[auxK - 1][i] == '1' || matriz[auxK - 1][i] == '0') {
+
+                if (auxK - 2 > 0) {
+                    if (bitTotal != NULL) {
+                        if ((bitTotal == '1' && matriz[auxK - 2][i] == '0') || (bitTotal == '0' && matriz[auxK - 2][i] == '1')) {
+                            bitTotal = '1';
+                        }
+                        else {
+                            bitTotal = '0';
+                        }
+                    }
+                    else {
+                        bitTotal = matriz[auxK - 1][i];
+                        if ((bitTotal == '1' && matriz[auxK - 2][i] == '0') || (bitTotal == '0' && matriz[auxK - 2][i] == '1')) {
+                            bitTotal = '1';
+                        }
+                        else {
+                            bitTotal = '0';
+                        }
+                    }
+                }
+
+                if (auxK - 2 == 0) {
+
+                    if (bitTotal == NULL) {
+                        bitTotal = matriz[auxK - 1][i];
+                    }
+
+                    if (bitTotal == '1') {
+                        if (actual == '1') {
+                            bitTotal = '0';
+                        }
+                        else {
+                            bitTotal = '1';
+                        }
+                    }
+                    else {
+                        if (actual == '1') {
+                            bitTotal = '1';
+                        }
+                        else {
+                            bitTotal = '0';
+                        }
+                    }
+                }
+            }
+            auxK--;
+        }
+        resultado[i] = bitTotal;
+        auxK = 0;
+        while (auxK != k) {
+            matriz[auxK][i + auxK] = bitTotal;
+            auxK++;
+        }
+
+        bitTotal = NULL;
+    }
+
+    string resul = "";
+    for (int i = 0; i < length - k + 1; i++) {
+        resul += resultado[i];
+    }
+    return resul;
+}
+
 int main() {
     int i = 0;
     //------------------------------------------------------EJERCICIO 1--------------------------------------------------------------------
@@ -410,6 +478,20 @@ int main() {
 
     //------------------------------------------------------EJERCICIO 4--------------------------------------------------------------------
     cout<< "-----------------------------------------------------------------\nEjercicio4: The Minion Game" << endl;
+
+
+
+
+     //------------------------------------------------------EJERCICIO 5--------------------------------------------------------------------
+    cout<< "-----------------------------------------------------------------\nEjercicio5: Cipher" << endl;
     
+    cout << "\nEl mensaje a descodificar es: " << "1110100110 con 4 desplazamientos" << endl;
+    cout << "Descodificando... \nMensaje descodificado: "<< cipher(4, "1110100110") << endl;
+
+    cout << "\nEl mensaje a descodificar es: " << "1110001 con 2 desplazamientos" << endl;
+    cout << "Descodificando... \nMensaje descodificado: "<< cipher(2, "1110001") << endl;
+
+    cout << "\nEl mensaje a descodificar es: " << "1110011011 con 3 desplazamientos" << endl;
+    cout << "Descodificando... \nMensaje descodificado: "<< cipher(3, "1110011011") << endl;
 
 }
