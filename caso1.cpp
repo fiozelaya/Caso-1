@@ -5,6 +5,7 @@ Fiorella Zelaya Coto
 
 #include <iostream>
 #include "string.h"
+#include <vector>
 
 using namespace std;
 
@@ -162,66 +163,9 @@ se implementaron las funciones crearYEncolar, descolar, y sizeOfBar.
 Para llevar a cabo el ejercicio birthday, se implementaron dos funciones,
 birthday y birthday2, siendo la segunda más eficiente que la primera.
 
-La diferencia entre ambas radica en que para poder analizar cada cuadro
-de la barra de chocolate, se asigna en casa vuelta del for la lista S a la
-variable Aux, y con un while se descolan los elementos según corresponda. 
-Mientras que en la segunda función, también se utiliza una variable auxiliar,
-sin embargo, no se realiza el proceso de descolar los elementos en cada vuelta,
-sino que se descolan según se realizan las demás instrucciones en la función.
-
-Al hacerlo de esta forma, la función 2 es más eficiente al no tener que
-repetir constantemente el descolar los elementos de la lista dinámica.
+La diferencia entre ambas radica en que .
 */
 
-//Struct Cuadro
-typedef struct Cuadro{
-    int digito;
-    Cuadro *PtrSiguiente;
-}*PtrCuadro;
-
-//Función crearYEncolarDigito: Crea un nuevo cuadro con su digito y lo
-//                             encola.
-//parámetros: La lista que simula la barra de chocolate de tipo PtrCuadro
-//            y el digito del Cuadro
-//restricciones: N/A
-//salidas: N/A
-void crearYEncolarDigito(PtrCuadro &lista, int n){
-    PtrCuadro Aux = lista;
-    PtrCuadro nuevo = new(Cuadro);
-    nuevo->digito = n;
-    nuevo->PtrSiguiente = NULL;
-        if (Aux != NULL){
-            while (Aux->PtrSiguiente != NULL){
-                Aux = Aux->PtrSiguiente;
-            }
-            Aux->PtrSiguiente = nuevo;
-        }
-        else{
-            lista = nuevo;
-        }
-}
-
-//Función sizeOfBar: calcula la longitud de la lista que simula la barra de
-//                   chocolate
-//parámetros: La lista que simula la barra de chocolate de tipo PtrCuadro
-//restricciones: N/A
-//salidas: retorna la longitud de la lista.
-int sizeOfBar(PtrCuadro Lista){
-    int n = 0;
-    while (Lista != NULL){
-        n++;
-        Lista = Lista->PtrSiguiente;
-    }
-    return n;
-}
-
-//Función descolar: descola un elemento de la lista.
-//parámetro:  lista que simula la barra de chocolate de tipo PtrCuadro
-//restricciones: N/A
-//salidas: N/A
-void descolar(PtrCuadro &Lista){
-    Lista = Lista->PtrSiguiente;
-}
 
 //Función birthday: Calcula la cantidad total de formas en las que Lily
 //                  puede darle m cuadros de chocolate a Ron, cuyos digitos
@@ -231,27 +175,17 @@ void descolar(PtrCuadro &Lista){
 //restricciones: N/A
 //salidas: retorna la cantidad total de formas en las que se puede dividir
 //         la barra
-int birthday(PtrCuadro s, int d, int m){
-    int auxM = m;
-    int suma = 0;
-    int resultado = 0;
-    PtrCuadro Aux;
-    int length = sizeOfBar(s);
+int birthday(vector<int> s, int d, int m){
+    int auxM = m, suma = 0, resultado = 0, j;
+    int length = s.size();
+    
     for (int i = 0; i < length; i++) {
-        Aux = s;
-        while (sizeOfBar(Aux) != length - i) {
-            descolar(Aux);
-        }
-        
-        while (auxM != 0) {
-            if (Aux != NULL) {
-                suma += Aux->digito;
-                auxM--;
-                Aux = Aux->PtrSiguiente;
-            }
-            else {
-                break;
-            }
+        j = i;
+
+        while (auxM != 0 && j < length) {
+            suma += s[j];
+            j++;
+            auxM--;
         }
 
         if (auxM == 0 && suma == d) {
@@ -259,6 +193,7 @@ int birthday(PtrCuadro s, int d, int m){
         }
         auxM = m;
         suma = 0;
+        
         
     }
 
@@ -273,22 +208,18 @@ int birthday(PtrCuadro s, int d, int m){
 //restricciones: N/A
 //salidas: retorna la cantidad total de formas en las que se puede dividir
 //         la barra
-int birthday2(PtrCuadro s, int d, int m){
-    int auxM = m;
-    int suma = 0;
-    int resultado = 0;
-    int length = sizeOfBar(s);
-    PtrCuadro aux = s;
+
+int birthday2(vector<int> s, int d, int m){
+    int auxM = m, suma = 0, resultado = 0, j;
+    int length = s.size();
+    
     for (int i = 0; i < length; i++) {
-        while (auxM != 0) {
-            if (aux != NULL) {
-                suma += aux->digito;
-                auxM--;
-                aux = aux->PtrSiguiente;
-            }
-            else {
-                break;
-            }
+        j = i;
+
+        while (auxM != 0 && j < length) {
+            suma += s[j];
+            j++;
+            auxM--;
         }
 
         if (auxM == 0 && suma == d) {
@@ -296,8 +227,7 @@ int birthday2(PtrCuadro s, int d, int m){
         }
         auxM = m;
         suma = 0;
-        descolar(s);
-        aux = s;
+        
         
     }
 
@@ -311,13 +241,72 @@ Ejercicio 4: The Minion Game
 
 */
 
+bool isVowel(char c){
+    if (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'){
+        return true;
+    }
+    return false;
+}
+
+int count(string text, string s){
+    int length = text.length(), i = 1, result = 0;
+    string subst;
+
+    while(i != 0){ //BANANA BANANA
+        i = text.find(s) + 1;
+        result++;
+        text = text.substr(i);
+    }
+
+    return result;
+}
+
 void minion_game(string text){
+    int stuart = 0, kevin = 0, i= 0, length = text.length();
 
 }
 
 
 /*
 Ejercicio 5: Cipher
+
+Crear un algoritmo que decodifique el número cifrado de Jack, para el cual
+se realiza n desplazamientos del número binario escogido, y luego se hace un
+XOR en cada columna. Como resultado, se obtiene el número cifrado.
+
+Para crear el algoritmo de decodificación, se utilizó la siguiente estrategia:
+
+Debido a que inicialmente se debe desplazar el número binario n veces, vamos a
+averiguar cada digito y lo vamos a desplazar n veces en un Array. El primer dígito
+es sencillo de averiguar, puesto que no realiza un XOR con nada.
+
+Ejemplo:
+
+Número a decodificar: 1110100110
+Desplazamientos: 4
+
+1
+ 1 <---- desplazamos el digito k veces (2)
+  1
+   1
+__________
+1110100110  <----- el primer digito es 1 (1)
+
+Luego, en la segunda columna, podemos observar que el resultado del XOR entre los
+digitos de las columnas es un 1. El único dígito que tenemos en la columna 2 es un 1,
+por lo tanto, si el resultado del XOR es un 1, quiere decir que el dígito "anterior"
+es un 0, puesto que 1 ^ 0 = 1.
+
+Entonces:
+
+10
+ 10 <---- desplazamos el digito k veces (2)
+  10
+   10
+__________
+1110100110  <----- el segundo digito es 0, puesto que 1 XOR 0 es 1 (1)
+
+Y así sucesivamente.
 
 */
 
@@ -326,89 +315,82 @@ string cipher(int k, string s) {
     char sArray[length + 1];
     strcpy_s(sArray, length + 1, s.c_str());
     char matriz[k][length];
-    char resultado[length - k + 1];
-
-    int auxK;
-    char actual;
-    char bitTotal = NULL;
+    string resul = "";
+    
+    int auxK, actual, bitAnterior;
+    char actualC, bit;
+    int bitTotal = -1;
 
     for (int i = 0; i < length - k + 1; i++) {
         auxK = k;
-        actual = sArray[i];
-        if (i == 0) {
-            resultado[0] = actual;
-            int j = 0;
-            while (j != k) {
-                matriz[j][i + j] = actual;
-                j++;
-            }
-            continue;
-        }
+        actual = sArray[i] == '1' ? 1:0;
 
         while (auxK - 1 != 0) {
-            if (matriz[auxK - 1][i] == '1' || matriz[auxK - 1][i] == '0') {
-
                 if (auxK - 2 > 0) {
-                    if (bitTotal != NULL) {
-                        if ((bitTotal == '1' && matriz[auxK - 2][i] == '0') || (bitTotal == '0' && matriz[auxK - 2][i] == '1')) {
-                            bitTotal = '1';
-                        }
-                        else {
-                            bitTotal = '0';
-                        }
+
+                    bitAnterior = matriz[auxK-2][i] == '1' ? 1:0;
+                    if (bitTotal != -1) {
+                        bitTotal = bitTotal ^ bitAnterior;
                     }
                     else {
-                        bitTotal = matriz[auxK - 1][i];
-                        if ((bitTotal == '1' && matriz[auxK - 2][i] == '0') || (bitTotal == '0' && matriz[auxK - 2][i] == '1')) {
-                            bitTotal = '1';
-                        }
-                        else {
-                            bitTotal = '0';
-                        }
+                        bitTotal = matriz[auxK - 1][i] == '1' ? 1:0;
+                        bitTotal = bitTotal ^ bitAnterior;
                     }
                 }
 
-                if (auxK - 2 == 0) {
+                else {
 
-                    if (bitTotal == NULL) {
-                        bitTotal = matriz[auxK - 1][i];
+                    if (bitTotal == -1) {
+                        bitTotal = matriz[auxK - 1][i] == '1' ? 1 : 0;
                     }
 
-                    if (bitTotal == '1') {
-                        if (actual == '1') {
-                            bitTotal = '0';
-                        }
-                        else {
-                            bitTotal = '1';
-                        }
+                    if (actual == 1) {
+                        bitTotal = bitTotal == 1 ? 0 : 1;
                     }
-                    else {
-                        if (actual == '1') {
-                            bitTotal = '1';
-                        }
-                        else {
-                            bitTotal = '0';
-                        }
-                    }
+
                 }
-            }
+            
             auxK--;
         }
-        resultado[i] = bitTotal;
-        auxK = 0;
+
+        bit = bitTotal == 1 ? '1':'0';
+        resul += bit;
         while (auxK != k) {
-            matriz[auxK][i + auxK] = bitTotal;
+            matriz[auxK][i + auxK] = bit;
             auxK++;
         }
 
-        bitTotal = NULL;
+        bitTotal = -1;
     }
 
-    string resul = "";
-    for (int i = 0; i < length - k + 1; i++) {
-        resul += resultado[i];
-    }
+    
     return resul;
+}
+
+/*
+Ejercicio 6: Pairs
+Se debe crear un algoritmo que recorra el array de números, comparando que
+la diferencia entre pares sea igual a k.
+
+parámetros: entero k, array de n números
+restricciones: N/A
+salidas: retorna la cantidad de pareas cuya diferencia es igual a k
+
+*/
+
+int pairs(int k, vector<int> array){
+    int length = array.size(), i = 0, j = 0, actual, resultado = 0;
+
+    while(i < length){
+        actual = array[i];
+        while (j < length){
+            if (actual - array[j] == k) { resultado++; }
+            j++;
+        }
+        j = 0; i++;
+    }
+
+    return resultado;
 }
 
 int main() {
@@ -441,43 +423,44 @@ int main() {
     //------------------------------------------------------EJERCICIO 3--------------------------------------------------------------------
     cout<< "-----------------------------------------------------------------\nEjercicio3: Birthday" << endl;
     cout << "\nFuncion 1:" << endl;
-    PtrCuadro Lista = NULL;
-    PtrCuadro Lista2 = NULL;
-    PtrCuadro Aux = NULL;
 
-    crearYEncolarDigito(Lista, 4);
+    vector<int> barraDeChocolate(1);
+    barraDeChocolate[0] = 4;
+    i = 0;
     int m = 1, d = 4;
 
-    Aux = Lista;
     cout << "La barra de chocolate tiene los siguientes digitos: ";
-    while (Aux != NULL){
-        cout << Aux->digito << " ";
-        Aux = Aux->PtrSiguiente;
+    while (i < barraDeChocolate.size()){
+        cout << barraDeChocolate[i] << " ";
+        i++;
     }
     cout << "\nLily quiere darle a Ron " << m << " cuadros de chocolate cuyos digitos sumen " << d << endl; 
-    cout << "La barra de chocolate puede ser dividida en " << birthday(Lista, d, m) << " formas." << endl;
+    cout << "La barra de chocolate puede ser dividida en " << birthday(barraDeChocolate, d, m) << " formas." << endl;
     
     cout << "\nFuncion 2:" << endl; 
 
-    crearYEncolarDigito(Lista2, 1);
-    crearYEncolarDigito(Lista2, 2);
-    crearYEncolarDigito(Lista2, 1);
-    crearYEncolarDigito(Lista2, 3);
-    crearYEncolarDigito(Lista2, 2);
+    vector<int> barraDeChocolate2(5);
+    barraDeChocolate2[0] = 1;
+    barraDeChocolate2[1] = 2;
+    barraDeChocolate2[2] = 1;
+    barraDeChocolate2[3] = 3;
+    barraDeChocolate2[4] = 2;
     m = 2; d = 3;
 
-    Aux = Lista2;
     cout << "La barra de chocolate tiene los siguientes digitos: ";
-    while (Aux != NULL){
-        cout << Aux->digito << " ";
-        Aux = Aux->PtrSiguiente;
+    i = 0;
+    while (i < barraDeChocolate2.size()){
+        cout << barraDeChocolate2[i] << " ";
+        i++;
     }
     cout << "\nLily quiere darle a Ron " << m << " cuadros de chocolate cuyos digitos sumen " << d << endl; 
     
-    cout << "La barra de chocolate puede ser dividida en " << birthday2(Lista2, d, m) << " formas." << endl;
+    cout << "La barra de chocolate puede ser dividida en " << birthday2(barraDeChocolate2, d, m) << " formas." << endl;
 
     //------------------------------------------------------EJERCICIO 4--------------------------------------------------------------------
     cout<< "-----------------------------------------------------------------\nEjercicio4: The Minion Game" << endl;
+    cout << "\nPalabra: BANANA \nResultado: " << endl;
+    minion_game("BANANA");
 
 
 
@@ -494,4 +477,25 @@ int main() {
     cout << "\nEl mensaje a descodificar es: " << "1110011011 con 3 desplazamientos" << endl;
     cout << "Descodificando... \nMensaje descodificado: "<< cipher(3, "1110011011") << endl;
 
+    //------------------------------------------------------EJERCICIO 6--------------------------------------------------------------------
+    cout<< "-----------------------------------------------------------------\nEjercicio6: Pairs" << endl;
+
+    vector<int> array(4);
+    array[0] = 1;
+    array[1] = 2;
+    array[2] = 3;
+    array[3] = 4;
+
+    cout << "\nArray actual: {1, 2, 3, 4} y k = 1 \nResultado: ";
+    cout << pairs(1, array) << endl;
+
+    vector<int> array2(5);
+    array2[0] = 1;
+    array2[1] = 5;
+    array2[2] = 3;
+    array2[3] = 4;
+    array2[4] = 2;
+
+    cout << "\nArray actual: {1, 5, 3, 4, 2} y k = 2 \nResultado: ";
+    cout << pairs(2, array2) << endl;
 }
