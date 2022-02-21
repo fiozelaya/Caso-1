@@ -6,6 +6,7 @@ Fiorella Zelaya Coto
 #include <iostream>
 #include "string.h"
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -241,29 +242,71 @@ Ejercicio 4: The Minion Game
 
 */
 
-bool isVowel(char c){
-    if (c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'){
+bool isVowel(string c){
+    if (c == "A" || c == "E" || c == "I" || c == "O" || c == "U"){
         return true;
     }
     return false;
 }
 
 int count(string text, string s){
-    int length = text.length(), i = 1, result = 0;
+    int length = text.length(), i, result = 0;
     string subst;
 
-    while(i != 0){ //BANANA BANANA
-        i = text.find(s) + 1;
+    while(true){ //BANANA BANANA
+        i = text.find(s);
+        if (i == -1){
+            break;
+        }
         result++;
-        text = text.substr(i);
+        text = text.substr(i + 1);
     }
 
     return result;
 }
 
-void minion_game(string text){
-    int stuart = 0, kevin = 0, i= 0, length = text.length();
+bool find(vector<string>& Vec, const string& Element ) 
+{
+    if (find(Vec.begin(), Vec.end(), Element) != Vec.end())
+        return true;
 
+    return false;
+}
+
+void minion_game(string text) {
+    int stuart = 0, kevin = 0, length = text.length(), apariciones = 0;
+    vector<string> array;
+    string substr;
+
+    for (int i = 0; i < length; i++) {
+        for (int j = 5; j >= i; j--) {
+            substr = text.substr(i, j - i + 1);
+
+            if (!find(array, substr)) {
+                array.push_back(substr);
+                apariciones = count(text, substr);
+
+                if (isVowel(substr.substr(0,1))) {
+                    kevin += apariciones;
+                }
+                else {
+                    stuart += apariciones;
+                }
+            }
+
+
+        }
+    }
+
+    if (stuart > kevin) {
+        cout << "Stuart " << stuart << endl;
+    }
+    else if (kevin > stuart) {
+        cout << "Kevin " << kevin << endl;
+    }
+    else {
+        cout << "Draw" << endl;
+    }
 }
 
 
@@ -462,7 +505,8 @@ int main() {
     cout << "\nPalabra: BANANA \nResultado: " << endl;
     minion_game("BANANA");
 
-
+    cout << "\nPalabra: HOLA \nResultado: " << endl;
+    minion_game("HOLA");
 
 
      //------------------------------------------------------EJERCICIO 5--------------------------------------------------------------------
