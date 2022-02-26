@@ -7,6 +7,7 @@ Fiorella Zelaya Coto
 #include "string.h"
 #include <vector>
 #include <algorithm>
+#include <HashTable.h>
 
 using namespace std;
 
@@ -65,16 +66,13 @@ Ejercicio 2: timeConversion
 Se implementaron las funciones timeConversion y timeConversion2, siendo la segunda mejor
 que la primera.
 
-La diferencia entre ambas radica en que la primer función hace uso de múltiples 
-condicionales if, if else, mientras que la segunda función no realiza esta gran
-cantidad de condicionales, solamente para saber si el formato es AM o PM. Luego,
-realiza la conversión de string a int para realizar una suma que determinará
-la hora en formato 24 horas, y luego lo convierte a string de nuevo.
+La diferencia entre ambas radica en que la primer función hace uso de un if para verificar
+si el formato de la hora es AM o PM, si es PM realiza una conversión de string a int, y suma
+12, y le agrega el resto del string (minutos y segundos). Si es AM y es 12, entonces la hora es 00.
 
-Por último, ambas funciones juntan el string de la hora con lo demás del
-string original y lo retornan, con la diferencia de que la segunda opción
-retorna directamente la operación, y la primera la asigna a una variable antes
-de retornarla.
+En la segunda función se realiza un proceso más arimético, en el que se se le suma a la hora la
+multiplicación de un factor por 12, el cual será 0 si no se debe cambiar la hora y 1 si se debe
+hacer la conversión a formato de 24 horas.
 */
 
 //Función timeConversion: convierte una hora en formato 12 horas a 24 horas
@@ -82,55 +80,25 @@ de retornarla.
 //restricciones: N/A
 //salidas: retorna un string del parámetros recibido en formato 24 horas.
 string timeConversion(string time12){
-    string time24;
+    //se obtiene el substr de la hora y del formato (AM o PM)
     string hour12 = time12.substr(0,2);
     string formato = time12.substr(8,2);
     time12 = time12.substr(2,6);
-    
-    if(formato == "PM"){
-        if (hour12 == "01"){
-            hour12 = "13";
-        }
-        else if(hour12 == "02"){
-            hour12 = "14";
-        }
-        else if(hour12 == "03"){
-            hour12 = "15";
-        }
-        else if(hour12 == "04"){
-            hour12 = "16";
-        }
-        else if(hour12 == "05"){
-            hour12 = "17";
-        }
-        else if(hour12 == "06"){
-            hour12 = "18";
-        }
-        else if(hour12 =="07"){
-            hour12 = "19";
-        }
-        else if(hour12 =="08"){
-            hour12 = "20";
-        }
-        else if(hour12 =="09"){
-            hour12 = "21";
-        }
-        else if(hour12 == "10"){
-            hour12 = "22";
-        }
-        else if(hour12 == "11"){
-            hour12 = "23";
-        }
 
+    //si el formato es PM y la hora no es 12, se convierte a entero y se suma 12
+    if (formato == "PM" && hour12 != "12"){
+        int hora = stoi(hour12);
+        hora += 12;
+        return to_string(hora).append(time12);
     }
-    else if (formato == "AM"){
-        if (hour12 == "12"){
-            hour12 = "00";
-        }
+    //si es AM y la hora 12, la hora es "00"
+    else if (hour12 == "12" && formato == "AM"){
+        hour12 = "00";
     }
-    
-    time24 = hour12.append(time12);
-    return time24;
+
+    //se retorna el string armado (hora en formato 24 horas + resto del string)
+    return hour12.append(time12);
+
 }
 
 //Función timeConversion: convierte una hora en formato 12 horas a 24 horas
@@ -138,20 +106,19 @@ string timeConversion(string time12){
 //restricciones: N/A
 //salidas: retorna un string del parámetros recibido en formato 24 horas.
 string timeConversion2(string time12){
-    string hour12 = time12.substr(0,2);
-    string formato = time12.substr(8,2);
-    time12 = time12.substr(2,6);
+    
+    string format24h = time12.substr(2, 6); //:mm:ss
+	int hrs = stoi(time12.substr(0,2)); //hh
+	int factor = ((hrs%12)/hrs); //Para PM: =0 si hrs=12 | =1 en otro caso
+	
+	if(time12[8]=='A')
+        factor--; //Para AM: =-1 si hrs=12 | =0 en otro caso 
+	
+    hrs += (12 * factor);
 
-    if (formato == "PM" && hour12 != "12"){
-        int hora = stoi(hour12);
-        hora += 12;
-        return to_string(hora).append(time12);
-    }
-    else if (hour12 == "12" && formato == "AM"){
-        hour12 = "00";
-    }
-
-    return hour12.append(time12);
+	format24h = (hrs<10) ? "0"+to_string(hrs)+format24h : to_string(hrs)+format24h;
+	
+	return format24h;
 }
 
 
@@ -240,36 +207,27 @@ int birthday2(vector<int> s, int d, int m){
 /*
 Ejercicio 4: The Minion Game
 
+Esta función consiste en comparar los puntos de Stuart y Kevin y decidir el ganador del juego.
+El juego consiste en sacar el máximo de "pedazos" de una palabra. Stuart saca las que empiezan
+con consonantes, y Kevin las que empiezan con vocales.
+
+Esta función calcula los puntos de stuart y kevin, calculando las probabilidades de cada
+substring. Por ejemplo, la consonante B en la palabra BANANA, tiene 6 posibilidades en total
+de substrings, por lo tanto, Stuart gana 6 puntos.
+
+Al final se imprime en pantalla el resultado.
 */
 
+/*
+isVowel: determina si el string es una vocal
+parámetros: string de la letra
+restricciones: N/A
+salidas: true si es vocal, false si no
+*/
 bool isVowel(string c){
     if (c == "A" || c == "E" || c == "I" || c == "O" || c == "U"){
         return true;
     }
-    return false;
-}
-
-int count(string text, string s){
-    int length = text.length(), i, result = 0;
-    string subst;
-
-    while(true){ //BANANA BANANA
-        i = text.find(s);
-        if (i == -1){
-            break;
-        }
-        result++;
-        text = text.substr(i + 1);
-    }
-
-    return result;
-}
-
-bool find(vector<string>& Vec, const string& Element ) 
-{
-    if (find(Vec.begin(), Vec.end(), Element) != Vec.end())
-        return true;
-
     return false;
 }
 
@@ -279,25 +237,14 @@ void minion_game(string text) {
     string substr;
 
     for (int i = 0; i < length; i++) {
-        for (int j = 5; j >= i; j--) {
-            substr = text.substr(i, j - i + 1);
-
-            if (!find(array, substr)) {
-                array.push_back(substr);
-                apariciones = count(text, substr);
-
-                if (isVowel(substr.substr(0,1))) {
-                    kevin += apariciones;
-                }
-                else {
-                    stuart += apariciones;
-                }
-            }
-
-
-        }
+        //se obtiene el substr de la letra con índice i
+        substr = text.substr(i,1);
+        //si es vocal, se le suma length - i a kevin, si es consonante, a stuart.
+        kevin+= ((isVowel(substr)) ? length-i:0);
+        stuart+= ((isVowel(substr)) ? 0:length-i);
     }
 
+    //comparaciones para determinar el ganador
     if (stuart > kevin) {
         cout << "Stuart " << stuart << endl;
     }
@@ -320,94 +267,45 @@ XOR en cada columna. Como resultado, se obtiene el número cifrado.
 Para crear el algoritmo de decodificación, se utilizó la siguiente estrategia:
 
 Debido a que inicialmente se debe desplazar el número binario n veces, vamos a
-averiguar cada digito y lo vamos a desplazar n veces en un Array. El primer dígito
-es sencillo de averiguar, puesto que no realiza un XOR con nada.
+averiguar cada digito hasta k - 1.
 
-Ejemplo:
+Luego, procedemos a calcular los digitos despues de k, haciendo un XOR entre
+los k - 1 dígitos anteriores y el actual.
 
-Número a decodificar: 1110100110
-Desplazamientos: 4
-
-1
- 1 <---- desplazamos el digito k veces (2)
-  1
-   1
-__________
-1110100110  <----- el primer digito es 1 (1)
-
-Luego, en la segunda columna, podemos observar que el resultado del XOR entre los
-digitos de las columnas es un 1. El único dígito que tenemos en la columna 2 es un 1,
-por lo tanto, si el resultado del XOR es un 1, quiere decir que el dígito "anterior"
-es un 0, puesto que 1 ^ 0 = 1.
-
-Entonces:
-
-10
- 10 <---- desplazamos el digito k veces (2)
-  10
-   10
-__________
-1110100110  <----- el segundo digito es 0, puesto que 1 XOR 0 es 1 (1)
+Por último, se realiza la conversión a string para retornarlo.
 
 Y así sucesivamente.
 
 */
 
 string cipher(int k, string s) {
+    // return resul;
     int length = s.length();
-    char sArray[length + 1];
-    strcpy_s(sArray, length + 1, s.c_str());
-    char matriz[k][length];
-    string resul = "";
-    
-    int auxK, actual, bitAnterior;
-    char actualC, bit;
-    int bitTotal = -1;
+    vector<char> result(length - k + 1);
 
-    for (int i = 0; i < length - k + 1; i++) {
-        auxK = k;
-        actual = sArray[i] == '1' ? 1:0;
+    result[0] = s[0]-48;
 
-        while (auxK - 1 != 0) {
-                if (auxK - 2 > 0) {
-
-                    bitAnterior = matriz[auxK-2][i] == '1' ? 1:0;
-                    if (bitTotal != -1) {
-                        bitTotal = bitTotal ^ bitAnterior;
-                    }
-                    else {
-                        bitTotal = matriz[auxK - 1][i] == '1' ? 1:0;
-                        bitTotal = bitTotal ^ bitAnterior;
-                    }
-                }
-
-                else {
-
-                    if (bitTotal == -1) {
-                        bitTotal = matriz[auxK - 1][i] == '1' ? 1 : 0;
-                    }
-
-                    if (actual == 1) {
-                        bitTotal = bitTotal == 1 ? 0 : 1;
-                    }
-
-                }
-            
-            auxK--;
-        }
-
-        bit = bitTotal == 1 ? '1':'0';
-        resul += bit;
-        while (auxK != k) {
-            matriz[auxK][i + auxK] = bit;
-            auxK++;
-        }
-
-        bitTotal = -1;
+    // Calcular los elementos de 1 a k-1
+    for (int i = 1; i < k; i++) {
+        result[i] = s[i-1] ^ s[i];
     }
 
-    
-    return resul;
+    // Calcular los elementos de k en adelante
+    char aux;
+    for (int i = k; i < length; i++) {
+        aux = '0';
+        for (int j = i-(k-1); j < i; j++) {
+            aux = aux ^ result[j];
+        }
+        result[i] = aux ^ s[i];
+    }
+
+    // Armar el string con el resultado
+    string final_result = "";
+    for (int i = 0; i < length - k + 1 ; i++) {
+        final_result += result[i]+48;
+    }
+    return final_result;
 }
 
 /*
@@ -415,22 +313,57 @@ Ejercicio 6: Pairs
 Se debe crear un algoritmo que recorra el array de números, comparando que
 la diferencia entre pares sea igual a k.
 
-parámetros: entero k, array de n números
-restricciones: N/A
-salidas: retorna la cantidad de pareas cuya diferencia es igual a k
+Para resolver este ejercicio, se utilizó un array de enteros donde se va
+guardando la diferencia de los números del array original - k para luego hacer
+una comparación con los demás números y calcular las parejas cuya diferencia
+sea igual a k.
 
 */
 
-int pairs(int k, vector<int> array){
-    int length = array.size(), i = 0, j = 0, actual, resultado = 0;
+/*
+Find: busca un valor en un array
+parámetros: int valor a buscar, array en el que se va a buscar el valor
+restricciones: N/A
+salidas: true si se encuentra, false si no
+*/
+bool find (int value, vector<int> arr){
+    int length = arr.size();
 
-    while(i < length){
-        actual = array[i];
-        while (j < length){
-            if (actual - array[j] == k) { resultado++; }
-            j++;
+    for (int i = 0; i < length; i++){
+        if (arr[i] == value){
+            return true;
         }
-        j = 0; i++;
+    }
+    return false;
+}
+
+/*
+Pairs
+parámetros: entero k, array de n números
+restricciones: N/A
+salidas: retorna la cantidad de pareas cuya diferencia es igual a k
+*/
+
+int pairs(int k, vector<int> arr) {
+    
+    //def variables
+    vector<int> diferencias;
+    diferencias.clear();
+    int length = arr.size(), actual = 0, resultado = 0;
+
+    for(int i = 0; i < length; i++){
+        actual = arr[i]; //entero actual del array
+        
+        //se pregunta si el entero actual, o el entero actual -k o el entero actual +k está en el array
+        //de diferencias
+        if (find(actual,diferencias) || find(actual - k, diferencias) || find(actual + k, diferencias)){
+            resultado++;
+        }
+
+        //se agrega al array actual -k y actual +k
+        diferencias.push_back(abs(actual - k));
+        diferencias.push_back(abs(actual + k));
+        
     }
 
     return resultado;
@@ -543,3 +476,4 @@ int main() {
     cout << "\nArray actual: {1, 5, 3, 4, 2} y k = 2 \nResultado: ";
     cout << pairs(2, array2) << endl;
 }
+
