@@ -44,6 +44,8 @@ int compareTriplets(int a[3], int b[3], int resultado[2]) {
     //asignación de puntos al Cuadro de resultados
     resultado[0] = ptsA;
     resultado[1] = ptsB;
+
+    return 0;
 }
 
 //compareTriplets2: Esta función compara los puntos de Alice y Bob en 3 categorías. Es la versión
@@ -71,6 +73,8 @@ int compareTriplets2(int a[3], int b[3], int resultado[2]) {
     }
     resultado[0]=resultado[0]/2;      //divide entre 2 para obtener el resultado
     resultado[1]=abs(resultado[1]/2);
+
+    return 0;
 }
 
 
