@@ -131,7 +131,11 @@ se implementaron las funciones crearYEncolar, descolar, y sizeOfBar.
 Para llevar a cabo el ejercicio birthday, se implementaron dos funciones,
 birthday y birthday2, siendo la segunda más eficiente que la primera.
 
-La diferencia entre ambas radica en que .
+La diferencia entre ambas radica en que la primera función tiene un while dentro del for
+que ya recorre el array, para recorrer los siguientos numeros en el array, y 
+por cada vuelta se realizan al menos 3 oepraciones ariméticas. 
+En cambio, en la segunda función, no implementa este while si no que va sumando conforme
+recorre el array UNA sola vez.
 */
 
 
@@ -178,23 +182,19 @@ int birthday(vector<int> s, int d, int m){
 //         la barra
 
 int birthday2(vector<int> s, int d, int m){
-    int auxM = m, suma = 0, resultado = 0, j;
+    int auxM = m, actual = 0, acarreo = 0, resultado = 0;
     int length = s.size();
     
     for (int i = 0; i < length; i++) {
-        j = i;
-
-        while (auxM != 0 && j < length) {
-            suma += s[j];
-            j++;
-            auxM--;
+        acarreo += s[i];
+        auxM--;
+        if(auxM == 0){
+            if (d == acarreo){
+                resultado++;
+            }
+            acarreo = s[i];
+            auxM = m - 1;
         }
-
-        if (auxM == 0 && suma == d) {
-            resultado++;
-        }
-        auxM = m;
-        suma = 0;
         
         
     }
@@ -372,6 +372,7 @@ int pairs(int k, vector<int> arr) {
 int main() {
     int i = 0;
     //------------------------------------------------------EJERCICIO 1--------------------------------------------------------------------
+    //Ejemplo 1
     int a[3] = { 50,90,100 };
     int b[3] = { 80,40,100 };
     int resultado[2];
@@ -379,11 +380,28 @@ int main() {
     cout << "\nFuncion 1:\nPuntos de alice: 50, 90, 100\nPuntos de Bob: 80, 40, 100\nResultado: ";
     compareTriplets(a, b, resultado);
     cout << resultado[0] << " " << resultado[1] << endl;
-
+    //Ejemplo 1.2
     a[0] = 97, a[1] = 56, a[2] = 10;
     b[0] = 73, b[1] = 78, b[2] = 97;
+    resultado[0] = 0, resultado[1] = 0;
+    cout << "Puntos de alice: 90, 56, 10\nPuntos de Bob: 73, 78, 97\nResultado: ";
+    compareTriplets(a, b, resultado);
+    cout << resultado[0] << " " << resultado[1] << endl;
+
+    //Ejemplo 2
+    a[0] = 50, a[1] = 90, a[2] = 100;
+    b[0] = 80, b[1] = 40, b[2] = 100;
+    resultado[0] = 0, resultado[1] = 0;
     compareTriplets2(a, b, resultado);
-    cout << "\nFuncion 2:\nPuntos de alice: 90, 56, 10\nPuntos de Bob: 73, 78, 97\nResultado: ";
+    cout << "\nFuncion 2:\nPuntos de alice: 50, 90, 100\nPuntos de Bob: 80, 40, 100\nResultado: ";
+    cout << resultado[0] << " " << resultado[1] << endl;
+
+    //Ejemplo 2.2
+    a[0] = 97, a[1] = 56, a[2] = 10;
+    b[0] = 73, b[1] = 78, b[2] = 97;
+    resultado[0] = 0, resultado[1] = 0;
+    compareTriplets2(a, b, resultado);
+    cout << "Puntos de alice: 90, 56, 10\nPuntos de Bob: 73, 78, 97\nResultado: ";
     cout << resultado[0] << " " << resultado[1] << endl;
 
     //------------------------------------------------------EJERCICIO 2--------------------------------------------------------------------
@@ -391,15 +409,23 @@ int main() {
     cout<< "-----------------------------------------------------------------\nEjercicio2: Conversion Time" << endl;
     cout << "\nFuncion 1: \nString inicial: " << time << endl;
     cout << "Resultado: " << timeConversion(time) << endl;
-
     time = "12:05:45AM";
+    cout << "String inicial: " << time << endl;
+    cout << "Resultado: " << timeConversion(time) << endl;
+
+    time = "06:05:45PM";
     cout << "\nFuncion 2: \nString inicial: " << time << endl;
     cout << "Resultado: " << timeConversion2(time) << endl;
+    time = "12:05:45AM";
+    cout << "String inicial: " << time << endl;
+    cout << "Resultado: " << timeConversion2(time) << endl;
+    
 
     //------------------------------------------------------EJERCICIO 3--------------------------------------------------------------------
     cout<< "-----------------------------------------------------------------\nEjercicio3: Birthday" << endl;
     cout << "\nFuncion 1:" << endl;
 
+    //Ejemplo 1
     vector<int> barraDeChocolate(1);
     barraDeChocolate[0] = 4;
     i = 0;
@@ -413,17 +439,55 @@ int main() {
     cout << "\nLily quiere darle a Ron " << m << " cuadros de chocolate cuyos digitos sumen " << d << endl; 
     cout << "La barra de chocolate puede ser dividida en " << birthday(barraDeChocolate, d, m) << " formas." << endl;
     
+    //Ejemplo 1.2
+    vector<int> barraDeChocolate3(5);
+    barraDeChocolate3[0] = 1;
+    barraDeChocolate3[1] = 2;
+    barraDeChocolate3[2] = 1;
+    barraDeChocolate3[3] = 3;
+    barraDeChocolate3[4] = 2;
+    m = 2; d = 3;
+    i = 0;
+
+    cout << "\nLa barra de chocolate tiene los siguientes digitos: ";
+    while (i < barraDeChocolate3.size()){
+        cout << barraDeChocolate3[i] << " ";
+        i++;
+    }
+
+    cout << "\nLily quiere darle a Ron " << m << " cuadros de chocolate cuyos digitos sumen " << d << endl; 
+    cout << "La barra de chocolate puede ser dividida en " << birthday(barraDeChocolate3, d, m) << " formas." << endl;
+    
     cout << "\nFuncion 2:" << endl; 
 
-    vector<int> barraDeChocolate2(5);
+    vector<int> barraDeChocolate4(1);
+
+    //Ejemplo 2
+    barraDeChocolate4[0] = 4;
+    i = 0;
+    m = 1, d = 4;
+
+    cout << "La barra de chocolate tiene los siguientes digitos: ";
+    i = 0;
+    while (i < barraDeChocolate4.size()){
+        cout << barraDeChocolate4[i] << " ";
+        i++;
+    }
+    cout << "\nLily quiere darle a Ron " << m << " cuadros de chocolate cuyos digitos sumen " << d << endl; 
+    
+    cout << "La barra de chocolate puede ser dividida en " << birthday2(barraDeChocolate4, d, m) << " formas." << endl;
+
+    //Ejemplo 2.2
+    vector<int> barraDeChocolate2(5);    
     barraDeChocolate2[0] = 1;
     barraDeChocolate2[1] = 2;
     barraDeChocolate2[2] = 1;
     barraDeChocolate2[3] = 3;
     barraDeChocolate2[4] = 2;
     m = 2; d = 3;
+    i = 0;
 
-    cout << "La barra de chocolate tiene los siguientes digitos: ";
+    cout << "\nLa barra de chocolate tiene los siguientes digitos: ";
     i = 0;
     while (i < barraDeChocolate2.size()){
         cout << barraDeChocolate2[i] << " ";
