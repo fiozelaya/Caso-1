@@ -17,12 +17,10 @@ using namespace std;
  Se implementaron compareTriplets y compareTriplets2, siendo la segunda función
  mejor que la primera. 
 
- La diferencia entre estas funciones, es que compareTriplets tiene 6 comparaciones más
- las comparaciones que realiza el for y 7 sumas, además de 2 deficiniciones de variables 
- y 2 asignaciones de resultados al final del for. 
-
- Mientras que la funcion 2 tiene solamente 6 comparaciones en total, 6 sumas
- y solamente 2 asignaciones en total.
+ La diferencia entre estas funciones, es que compareTriplets tiene un for donde realiza
+ 6 comparaciones y 6 sumas. La función 2 no tiene un for, si no que realiza 3 comparaciones para
+ asegurarse de que los números no sean iguales, y realiza en el peor de los casos 11
+ operaciones ariméticas.
 */
 
 //compareTriplets: Esta función compara los puntos de Alice y Bob en 3 categorías.
@@ -39,7 +37,7 @@ int compareTriplets(int a[3], int b[3], int resultado[2]) {
         if (a[i] <  b[i]) {
             ptsB++;
         }
-        if ( b[i] < a[i]) {
+        else if ( b[i] < a[i]) {
             ptsA++;
         }
     }
@@ -55,9 +53,24 @@ int compareTriplets(int a[3], int b[3], int resultado[2]) {
 //restricciones: los puntos de Alice y Bob deben estar en el rango 1-100
 //salidas: se modifica el Cuadro "resultado" de modo que: [puntos_de_alice, puntos_de_bob]
 int compareTriplets2(int a[3], int b[3], int resultado[2]) {
-    resultado[0] = (a[0] > b[0] ? 1 : 0) +  (a[1] > b[1] ? 1 : 0) + (a[2] > b[2] ? 1 : 0);
-    resultado[1] = (a[0] < b[0] ? 1 : 0) +  (a[1] < b[1] ? 1 : 0) + (a[2] < b[2] ? 1 : 0);
 
+    if(a[0]!= b[0]){
+        int numero=(a[0]-b[0])/abs(a[0]-b[0]); //+1 si ana es mayor
+        resultado[0]+=numero+1;                   //-1 si bob es mayor
+        resultado[1]+=numero-1;                   //se hace 0
+    }
+    if(a[1]!=b[1]){
+        int numero=(a[1]-b[1])/abs(a[1]-b[1]);
+        resultado[0]+=numero+1;        //para tener múltiplos de dos
+        resultado[1]+=numero-1;
+    }
+    if(a[2]!=b[2]){
+        int numero=(a[2]-b[2])/abs(a[2]-b[2]);
+        resultado[0]+=numero+1;
+        resultado[1]+=numero-1;
+    }
+    resultado[0]=resultado[0]/2;      //divide entre 2 para obtener el resultado
+    resultado[1]=abs(resultado[1]/2);
 }
 
 
@@ -355,14 +368,14 @@ int pairs(int k, vector<int> arr) {
         actual = arr[i]; //entero actual del array
         
         //se pregunta si el entero actual, o el entero actual -k o el entero actual +k está en el array
-        //de diferencias
+        //de diferencias, si está es porque hace pareja con la diferencia de otro número
         if (find(actual,diferencias) || find(actual - k, diferencias) || find(actual + k, diferencias)){
             resultado++;
         }
 
         //se agrega al array actual -k y actual +k
-        diferencias.push_back(abs(actual - k));
-        diferencias.push_back(abs(actual + k));
+        diferencias.insert(diferencias.begin(), abs(actual - k));
+        diferencias.insert(diferencias.begin(), abs(actual + k));
         
     }
 
